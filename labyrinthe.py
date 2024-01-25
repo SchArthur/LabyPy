@@ -1,4 +1,6 @@
-import random
+import pygame
+
+wall_color = '#6C3B1C'
 
 class Labyrinthe :
     # constructeur
