@@ -38,11 +38,17 @@ class Labyrinthe :
         """Détruit un mur du labyrinthe en (i,j) sur l'axe (x,y)"""
         self.matrice[j][i]=0
 
-laby = Labyrinthe(12,5)
-laby.setXY(5,2,1)
-print(laby.getSize())
-laby.génère()
-laby.affiche()
+    def set_from_file(self, fichier:str):
+        """Lis et créer la matrice présente dans le fichier à l'adresse indiqué"""
+        file = open(fichier, "r")
+        list_lignes = file.readlines()
+        for i in range(len(list_lignes)):
+            liste_cases = list_lignes[i][:-1]
+            liste_cases = [int(x) for x in liste_cases.split(',')]
+            for j in range(len(liste_cases)):
+                self.setXY(j,i,liste_cases[j])
+
+        file.close()
 
 print(laby.get_matrice())
 print(laby.getXY(5,2))
