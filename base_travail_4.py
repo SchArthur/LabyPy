@@ -80,6 +80,7 @@ while running:
     next_move += dt
     # gestion des déplacements
     if next_move>0:
+        old_pos = player_pos.copy()
         if keys['UP'] == 1:
             player_pos.y -= 1
             next_move = -player_speed
@@ -93,7 +94,7 @@ while running:
             player_pos.x += 1
             next_move = -player_speed
 
-        # vérification du déplacement du joueur
+        # vérification du déplacement du joueur pour ne pas sortir de la fenetre
         if player_pos.y < 0:
             player_pos.y = 0
         if player_pos.y >= size[1]:
@@ -103,8 +104,11 @@ while running:
         if player_pos.x > size[0]-1:
             player_pos.x = size[0]-1
 
-        if show_pos:
-            print("pos: ",player_pos)
+        if laby.getXY(int(player_pos.x),int(player_pos.y)) == 1 :
+            player_pos = old_pos.copy()
+
+    if show_pos:
+        print("pos: ",player_pos)
 
 
     # affichage des différents composants
@@ -113,6 +117,10 @@ while running:
             pygame.draw.line(screen,grid_color, (tilesize*i, 0), (tilesize*i, tilesize*size[0]) )
         for i in range(0,size[1]):
             pygame.draw.line(screen,grid_color, (0, tilesize*i), (tilesize*size[0], tilesize*i) )
+
+    # affichage du labyrinthe
+    laby.draw(screen,tilesize)
+    brouillard.draw(screen,tilesize,player_pos,laby)
 
     #affichage du joueur
     pygame.draw.rect(screen, player_color, pygame.Rect(player_pos.x*tilesize, player_pos.y*tilesize, tilesize, tilesize))
