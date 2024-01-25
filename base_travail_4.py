@@ -27,7 +27,13 @@ show_pos = False
 
 keys= { "UP":0 , "DOWN":0, "LEFT":0, "RIGHT":0 }
 
-player_pos = pygame.Vector2(round(size[0]/8), round(size[1]/2))
+player_pos = pygame.Vector2(size[0]//8, size[1]//2)
+
+# Labyrinthe
+laby = labyrinthe.Labyrinthe(size[0],size[1])
+laby.set_from_file("laby-01.csv")
+brouillard = fow.fog_of_war(size[0],size[1])
+
 
 #tour de boucle, pour chaque FPS
 while running:
