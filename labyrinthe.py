@@ -52,17 +52,18 @@ class Labyrinthe :
 
         file.close()
 
-print(laby.get_matrice())
-print(laby.getXY(5,2))
+    def draw(self, screen, tilesize):
+        for i in range(len(self.matrice)):
+            ligne = self.matrice[i]
+            for j in range(len(ligne)):
+                if self.matrice[i][j] == 1:
+                    pygame.draw.rect(screen, wall_color, pygame.Rect(j*tilesize, i*tilesize, tilesize, tilesize))
 
 
-l1 = [1, 2, 3, 4, 5]
-l2 = [6, 7, 8, 9, 10]
-l3 = [11,12,13,14,15]
-lst = []
-lst.append(l1)
-lst.append(l2)
-lst.append(l3)
-print(lst)
+"""
+laby = Labyrinthe(20,10)
 
-print(lst[2][1])
+laby.set_from_file("laby-01.csv")
+
+print(laby.matrice[2][4])
+"""
