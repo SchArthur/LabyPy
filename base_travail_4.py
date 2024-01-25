@@ -1,6 +1,7 @@
 # Example file showing a circle moving on screen
 import pygame
-import random
+import fow
+import labyrinthe
 # pygame setup
 pygame.init()
 
