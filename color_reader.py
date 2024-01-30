@@ -14,6 +14,7 @@ class color_read():
                 split_ligne = ligne.split('=')
                 self.color_dict[split_ligne[0]] = split_ligne[1][:-1]
 
+        color_file.close()
         return self.color_dict
 
 test = color_read()
