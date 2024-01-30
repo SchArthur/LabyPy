@@ -48,6 +48,7 @@ gridPressed = 0
 posPressed = 0
 
 item_list = level.item_list
+alien_list = level.alien_list
 
 #tour de boucle, pour chaque FPS
 while running:
@@ -130,6 +131,8 @@ while running:
     # affichage du labyrinthe
     laby.draw(screen,tilesize,couleurs)
     for elt in item_list:
+        elt.draw(screen,tilesize,couleurs)
+    for elt in alien_list:
         elt.draw(screen,tilesize,couleurs)
     brouillard.draw(screen,tilesize,player_pos,laby, couleurs)
     

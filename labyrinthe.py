@@ -74,6 +74,6 @@ class Labyrinthe :
                 print('Arrivé avec tous les items, level validé')
                 self.is_finished = True
             else:
-                print('Il manque ' + str(len(item_list) - items_collected) + " diamants. Level en attente de validation, recherchez les objets manquants.")
+                print('Il manque ' + str(len(item_list) - items_collected) + " diamant(s). Level en attente de validation, recherchez les objets manquants.")
 
 
