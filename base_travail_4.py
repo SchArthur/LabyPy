@@ -2,128 +2,148 @@
 import pygame
 import fow
 import labyrinthe
+from inputController import inputControl
+from grid import Grid
+from color_reader import color_read
+import item
+import levelloader
 # pygame setup
 pygame.init()
 
 #constantes
-tilesize = 32 # taille d'une tuile IG
-size = (20, 10) # taille du monde
+
+
 fps = 30 # fps du jeu
 player_speed = 150 # vitesse du joueur
 next_move = 0 #tic avant déplacement
 
 # color
-ground_color = "#EDDACF"
-grid_color = "#7F513D"
-player_color = "#9F715D"
+couleurs = color_read().readFile("color.ini")
 
 
-screen = pygame.display.set_mode((size[0]*tilesize, size[1]*tilesize))
 clock = pygame.time.Clock()
 running = True
 dt = 0
 show_grid = True
 show_pos = False
 
-keys= { "UP":0 , "DOWN":0, "LEFT":0, "RIGHT":0 }
+#LEVEL
+level_file = "level-02.csv"
+level = levelloader.newLevel(level_file)
+tilesize = level.level_dict["TILESIZE"] # taille d'une tuile IG
+size = (level.level_dict["SIZE_X"], level.level_dict["SIZE_Y"]) # taille du monde
 
-player_pos = pygame.Vector2(size[0]//8, size[1]//2)
-
+screen = pygame.display.set_mode((size[0]*tilesize, size[1]*tilesize))
 # Labyrinthe
 laby = labyrinthe.Labyrinthe(size[0],size[1])
-laby.set_from_file("laby-01.csv")
+laby.set_from_file(level.level_dict["LABY_FILE"])
 brouillard = fow.fog_of_war(size[0],size[1])
 
+grid = Grid(size[0], size[1],tilesize)
+
+player_pos = laby.getPlayerPos()
+
+input = inputControl()
+gridPressed = 0
+posPressed = 0
+
+item_list = level.item_list
+alien_list = level.alien_list
 
 #tour de boucle, pour chaque FPS
 while running:
-    screen.fill(ground_color)
+    screen.fill(couleurs["ground_color"])
 
     # lecture clavier / souris
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
 
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_z or event.key == pygame.K_UP:
-                keys['UP'] = 1
-            if event.key == pygame.K_s or event.key == pygame.K_DOWN:
-                keys['DOWN'] = 1
-            if event.key == pygame.K_q or event.key == pygame.K_LEFT:
-                keys['LEFT'] = 1
-            if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
-                keys['RIGHT'] = 1
+    keysPressed = input.keyPressed()
 
-        if event.type == pygame.KEYUP:
-            if event.key == pygame.K_z or event.key == pygame.K_UP:
-                keys['UP'] = 0
-            if event.key == pygame.K_s or event.key == pygame.K_DOWN:
-                keys['DOWN'] = 0
-            if event.key == pygame.K_q or event.key == pygame.K_LEFT:
-                keys['LEFT'] = 0
-            if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
-                keys['RIGHT'] = 0
+    # Quit game
+    if keysPressed["QUIT"] == 1:
+        running = False
 
-            if event.key == pygame.K_ESCAPE:
-                running = False
-            if event.key == pygame.K_g:
-                show_grid = not show_grid
-            if event.key == pygame.K_p:
-                show_pos = not show_pos
-        
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            pos = pygame.mouse.get_pos()
-            print("mouse_pos:", pos)
-    
+    # Show grid
+    if keysPressed["GRID"] == 1 and not gridPressed:
+        show_grid = not show_grid
+        gridPressed = True
+    if keysPressed["GRID"] == 0 and gridPressed:
+        gridPressed = False
+
+
+    if keysPressed["POS"] == 1 and not posPressed:
+        show_pos = not show_pos
+        posPressed = True
+    if keysPressed["POS"] == 0 and posPressed:
+        posPressed = False
 
 
     next_move += dt
     # gestion des déplacements
     if next_move>0:
         old_pos = player_pos.copy()
-        if keys['UP'] == 1:
+        if keysPressed['UP'] == 1:
             player_pos.y -= 1
             next_move = -player_speed
-        elif keys['DOWN'] == 1:
+        elif keysPressed['DOWN'] == 1:
             player_pos.y += 1
             next_move = -player_speed
-        elif keys['LEFT'] == 1:
+        elif keysPressed['LEFT'] == 1:
             player_pos.x -= 1
             next_move = -player_speed
-        elif keys['RIGHT'] == 1:
+        elif keysPressed['RIGHT'] == 1:
             player_pos.x += 1
             next_move = -player_speed
 
         # vérification du déplacement du joueur pour ne pas sortir de la fenetre
-        if player_pos.y < 0:
-            player_pos.y = 0
-        if player_pos.y >= size[1]:
-            player_pos.y = size[1]-1
-        if player_pos.x < 0:
-            player_pos.x = 0
-        if player_pos.x > size[0]-1:
-            player_pos.x = size[0]-1
+        if next_move == -player_speed:
+            if player_pos.y < 0:
+                player_pos.y = 0
+                next_move = 0
+            if player_pos.y >= size[1]:
+                player_pos.y = size[1]-1
+                next_move = 0
+            if player_pos.x < 0:
+                player_pos.x = 0
+                next_move = 0
+            if player_pos.x > size[0]-1:
+                player_pos.x = size[0]-1
+                next_move = 0
 
-        if laby.getXY(int(player_pos.x),int(player_pos.y)) == 1 :
-            player_pos = old_pos.copy()
+            #detection de collisions
+            if laby.getXY(int(player_pos.x),int(player_pos.y)) == '1' :
+                player_pos = old_pos.copy()
+            if laby.getXY(int(player_pos.x),int(player_pos.y)) == 'A' :
+                laby.finish(item_list)
+            for elt in item_list:
+                if (player_pos.x, player_pos.y) == (elt.position_x, elt.position_y):
+                    if not elt.isCollected:
+                        elt.collect()
+            for elt in alien_list:
+                if (player_pos.x, player_pos.y) == (elt.position_x, elt.position_y):
+                    player_pos = laby.getPlayerPos()
 
     if show_pos:
         print("pos: ",player_pos)
 
 
     # affichage des différents composants
+    # affichage de la grid
     if show_grid:
-        for i in range(1,size[0]):
-            pygame.draw.line(screen,grid_color, (tilesize*i, 0), (tilesize*i, tilesize*size[0]) )
-        for i in range(0,size[1]):
-            pygame.draw.line(screen,grid_color, (0, tilesize*i), (tilesize*size[0], tilesize*i) )
+        grid.draw(screen, couleurs["grid_color"])
 
     # affichage du labyrinthe
-    laby.draw(screen,tilesize)
-    brouillard.draw(screen,tilesize,player_pos,laby)
+    laby.draw(screen,tilesize,couleurs)
+    for elt in item_list:
+        elt.draw(screen,tilesize,couleurs)
+    for elt in alien_list:
+        elt.roam(dt, laby, size[0], size[1])
+        elt.draw(screen,tilesize,couleurs)
+    brouillard.draw(screen,tilesize,player_pos,laby, couleurs)
+
+
 
     #affichage du joueur
-    pygame.draw.rect(screen, player_color, pygame.Rect(player_pos.x*tilesize, player_pos.y*tilesize, tilesize, tilesize))
+    pygame.draw.rect(screen, couleurs["player_color"], pygame.Rect(player_pos.x*tilesize, player_pos.y*tilesize, tilesize, tilesize))
 
     pygame.display.flip()
     dt = clock.tick(fps)

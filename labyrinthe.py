@@ -1,6 +1,5 @@
 import pygame
-
-wall_color = '#6C3B1C'
+import item
 
 class Labyrinthe :
     # constructeur
@@ -8,17 +7,10 @@ class Labyrinthe :
         """sizeX, sizeY désignent la taille du labyrinthe sur l'axe (x,y)"""
         self.sizeX = sizeX
         self.sizeY = sizeY
+
+        self.is_finished = False
         #attention création d'une matrice en Y X
         self.matrice = [ [0]* self.sizeX for _ in range(self.sizeY) ]
-
-    def affiche(self):
-        """Sortie console du labyrinthe"""
-        for j in range(self.sizeY):
-            for i in range(self.sizeX):
-                # rappel: matrice en Y,X
-                print(self.matrice[j][i], end = "")
-            print()
-        #print(self.matrice)
 
     def get_matrice(self):
         """renvoie la matrice associée au labyrinthe"""
@@ -46,24 +38,42 @@ class Labyrinthe :
         list_lignes = file.readlines()
         for i in range(len(list_lignes)):
             liste_cases = list_lignes[i][:-1]
-            liste_cases = [int(x) for x in liste_cases.split(',')]
+            liste_cases = liste_cases.split(',')
             for j in range(len(liste_cases)):
                 self.setXY(j,i,liste_cases[j])
 
         file.close()
 
-    def draw(self, screen, tilesize):
+    def draw(self, screen, tilesize, color_dict):
+        wall_color = color_dict['wall_color']
+        finish_color = color_dict['finish_color']
         for i in range(len(self.matrice)):
             ligne = self.matrice[i]
             for j in range(len(ligne)):
-                if self.matrice[i][j] == 1:
+                if self.matrice[i][j] == '1':
                     pygame.draw.rect(screen, wall_color, pygame.Rect(j*tilesize, i*tilesize, tilesize, tilesize))
+                elif self.matrice[i][j] == 'A':
+                    pygame.draw.line(screen, finish_color,(j*tilesize, i*tilesize),(j*tilesize + tilesize, i*tilesize + tilesize), 3)
+                    pygame.draw.line(screen, finish_color,(j*tilesize + tilesize, i*tilesize),(j*tilesize, i*tilesize + tilesize), 3)
+
+    def getPlayerPos(self):
+        for i in range(len(self.matrice)):
+            ligne = self.matrice[i]
+            for j in range(len(ligne)):
+                if self.matrice[i][j] == 'D':
+                    return pygame.Vector2(j,i)
+
+                
+    def finish(self, item_list):
+        items_collected = 0
+        if not self.is_finished :
+            for item in item_list:
+                if item.isCollected :
+                    items_collected +=1
+            if items_collected == len(item_list):
+                print('Arrivé avec tous les items, level validé')
+                self.is_finished = True
+            else:
+                print('Il manque ' + str(len(item_list) - items_collected) + " diamant(s). Level en attente de validation, recherchez les objets manquants.")
 
 
-"""
-laby = Labyrinthe(20,10)
-
-laby.set_from_file("laby-01.csv")
-
-print(laby.matrice[2][4])
-"""
