@@ -1,7 +1,5 @@
 import pygame
 
-wall_color = '#6C3B1C'
-
 class Labyrinthe :
     # constructeur
     def __init__(self, sizeX, sizeY):
@@ -52,7 +50,7 @@ class Labyrinthe :
 
         file.close()
 
-    def draw(self, screen, tilesize):
+    def draw(self, screen, tilesize, wall_color):
         for i in range(len(self.matrice)):
             ligne = self.matrice[i]
             for j in range(len(ligne)):

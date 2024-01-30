@@ -4,6 +4,7 @@ import fow
 import labyrinthe
 from inputController import inputControl
 from grid import Grid
+from color_reader import color_read
 # pygame setup
 pygame.init()
 
@@ -15,10 +16,7 @@ player_speed = 150 # vitesse du joueur
 next_move = 0 #tic avant déplacement
 
 # color
-ground_color = "#EDDACF"
-grid_color = "#7F513D"
-player_color = "#9F715D"
-
+couleurs = color_read().readFile("color.ini")
 
 screen = pygame.display.set_mode((size[0]*tilesize, size[1]*tilesize))
 clock = pygame.time.Clock()
@@ -42,7 +40,7 @@ posPressed = 0
 
 #tour de boucle, pour chaque FPS
 while running:
-    screen.fill(ground_color)
+    screen.fill(couleurs["ground_color"])
 
     # lecture clavier / souris
 
@@ -104,14 +102,14 @@ while running:
     # affichage des différents composants
     # affichage de la grid
     if show_grid:
-        grid.draw(screen, grid_color)
+        grid.draw(screen, couleurs["grid_color"])
 
     # affichage du labyrinthe
-    laby.draw(screen,tilesize)
-    brouillard.draw(screen,tilesize,player_pos,laby)
+    laby.draw(screen,tilesize,couleurs["wall_color"])
+    brouillard.draw(screen,tilesize,player_pos,laby, couleurs)
 
     #affichage du joueur
-    pygame.draw.rect(screen, player_color, pygame.Rect(player_pos.x*tilesize, player_pos.y*tilesize, tilesize, tilesize))
+    pygame.draw.rect(screen, couleurs["player_color"], pygame.Rect(player_pos.x*tilesize, player_pos.y*tilesize, tilesize, tilesize))
 
     pygame.display.flip()
     dt = clock.tick(fps)

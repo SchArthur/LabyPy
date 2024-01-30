@@ -1,10 +1,6 @@
 import pygame
 import labyrinthe
 
-color_not_seen = "#101010"
-color_seen = "#999999"
-color_wall_fog = '#926641'
-
 view_range = 2
 
 class fog_of_war:
@@ -14,18 +10,19 @@ class fog_of_war:
 
         self.matrice = [ [1]* self.sizeX for _ in range(self.sizeY) ]
     
-    def draw(self, screen, tilesize,player_pos,labyrinthe:labyrinthe.Labyrinthe):
+    def draw(self, screen, tilesize,player_pos,labyrinthe:labyrinthe.Labyrinthe, color_dict):
+        
         self.update(player_pos)
         for i in range(len(self.matrice)):
             ligne = self.matrice[i]
             for j in range(len(ligne)):
                 if self.matrice[i][j] == 1:
-                    pygame.draw.rect(screen, color_not_seen, pygame.Rect(j*tilesize, i*tilesize, tilesize, tilesize))
+                    pygame.draw.rect(screen, color_dict["fow_color_not_seen"], pygame.Rect(j*tilesize, i*tilesize, tilesize, tilesize))
                 elif self.matrice[i][j] == 2:
                     if labyrinthe.getXY(j,i) == 0:
-                        pygame.draw.rect(screen, color_seen, pygame.Rect(j*tilesize, i*tilesize, tilesize, tilesize))
+                        pygame.draw.rect(screen, color_dict["fow_color_seen"], pygame.Rect(j*tilesize, i*tilesize, tilesize, tilesize))
                     elif labyrinthe.getXY(j,i) == 1:
-                        pygame.draw.rect(screen, color_wall_fog, pygame.Rect(j*tilesize, i*tilesize, tilesize, tilesize))
+                        pygame.draw.rect(screen, color_dict["fow_color_wall_fog"], pygame.Rect(j*tilesize, i*tilesize, tilesize, tilesize))
 
     def update(self, player_pos):
         """Mets à jouer le brouillard de guerre"""
