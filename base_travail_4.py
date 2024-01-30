@@ -133,8 +133,9 @@ while running:
     for elt in item_list:
         elt.draw(screen,tilesize,couleurs)
     for elt in alien_list:
+        elt.roam(dt, laby)
         elt.draw(screen,tilesize,couleurs)
-    brouillard.draw(screen,tilesize,player_pos,laby, couleurs)
+    # brouillard.draw(screen,tilesize,player_pos,laby, couleurs)
     
     
 
