@@ -88,20 +88,29 @@ while running:
             next_move = -player_speed
 
         # vérification du déplacement du joueur pour ne pas sortir de la fenetre
-        if player_pos.y < 0:
-            player_pos.y = 0
-        if player_pos.y >= size[1]:
-            player_pos.y = size[1]-1
-        if player_pos.x < 0:
-            player_pos.x = 0
-        if player_pos.x > size[0]-1:
-            player_pos.x = size[0]-1
+        if next_move == -player_speed:
+            if player_pos.y < 0:
+                player_pos.y = 0
+                next_move = 0
+            if player_pos.y >= size[1]:
+                player_pos.y = size[1]-1
+                next_move = 0
+            if player_pos.x < 0:
+                player_pos.x = 0
+                next_move = 0
+            if player_pos.x > size[0]-1:
+                player_pos.x = size[0]-1
+                next_move = 0
 
-        #detection de collisions
-        if laby.getXY(int(player_pos.x),int(player_pos.y)) == '1' :
-            player_pos = old_pos.copy()
-        if laby.getXY(int(player_pos.x),int(player_pos.y)) == 'A' :
-            print("Arrivé à la sortie")
+            #detection de collisions
+            if laby.getXY(int(player_pos.x),int(player_pos.y)) == '1' :
+                player_pos = old_pos.copy()
+            if laby.getXY(int(player_pos.x),int(player_pos.y)) == 'A' :
+                laby.finish(item_list)
+            for elt in item_list:
+                if (player_pos.x, player_pos.y) == (elt.position_x, elt.position_y):
+                    if not elt.isCollected:
+                        elt.collect()
 
     if show_pos:
         print("pos: ",player_pos)
