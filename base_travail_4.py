@@ -25,7 +25,7 @@ dt = 0
 show_grid = True
 show_pos = False
 
-player_pos = pygame.Vector2(size[0]//8, size[1]//2)
+
 
 # Labyrinthe
 laby = labyrinthe.Labyrinthe(size[0],size[1])
@@ -33,6 +33,8 @@ laby.set_from_file("laby-01.csv")
 brouillard = fow.fog_of_war(size[0],size[1])
 
 grid = Grid(size[0], size[1],tilesize)
+
+player_pos = laby.getPlayerPos()
 
 input = inputControl()
 gridPressed = 0
@@ -92,8 +94,11 @@ while running:
         if player_pos.x > size[0]-1:
             player_pos.x = size[0]-1
 
-        if laby.getXY(int(player_pos.x),int(player_pos.y)) == 1 :
+        #detection de collisions
+        if laby.getXY(int(player_pos.x),int(player_pos.y)) == '1' :
             player_pos = old_pos.copy()
+        if laby.getXY(int(player_pos.x),int(player_pos.y)) == 'A' :
+            print("Arrivé à la sortie")
 
     if show_pos:
         print("pos: ",player_pos)
@@ -105,7 +110,7 @@ while running:
         grid.draw(screen, couleurs["grid_color"])
 
     # affichage du labyrinthe
-    laby.draw(screen,tilesize,couleurs["wall_color"])
+    laby.draw(screen,tilesize,couleurs)
     brouillard.draw(screen,tilesize,player_pos,laby, couleurs)
 
     #affichage du joueur

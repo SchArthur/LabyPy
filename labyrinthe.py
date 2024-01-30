@@ -44,18 +44,31 @@ class Labyrinthe :
         list_lignes = file.readlines()
         for i in range(len(list_lignes)):
             liste_cases = list_lignes[i][:-1]
-            liste_cases = [int(x) for x in liste_cases.split(',')]
+            print(liste_cases)
+            liste_cases = liste_cases.split(',')
             for j in range(len(liste_cases)):
                 self.setXY(j,i,liste_cases[j])
 
         file.close()
 
-    def draw(self, screen, tilesize, wall_color):
+    def draw(self, screen, tilesize, color_dict):
+        wall_color = color_dict['wall_color']
+        finish_color = color_dict['finish_color']
         for i in range(len(self.matrice)):
             ligne = self.matrice[i]
             for j in range(len(ligne)):
-                if self.matrice[i][j] == 1:
+                if self.matrice[i][j] == '1':
                     pygame.draw.rect(screen, wall_color, pygame.Rect(j*tilesize, i*tilesize, tilesize, tilesize))
+                elif self.matrice[i][j] == 'A':
+                    pygame.draw.line(screen, finish_color,(j*tilesize, i*tilesize),(j*tilesize + tilesize, i*tilesize + tilesize), 3)
+                    pygame.draw.line(screen, finish_color,(j*tilesize + tilesize, i*tilesize),(j*tilesize, i*tilesize + tilesize), 3)
+
+    def getPlayerPos(self):
+        for i in range(len(self.matrice)):
+            ligne = self.matrice[i]
+            for j in range(len(ligne)):
+                if self.matrice[i][j] == 'D':
+                    return pygame.Vector2(j,i)
 
 
 """
