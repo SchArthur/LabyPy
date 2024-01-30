@@ -1,4 +1,5 @@
 import pygame
+import item
 
 class Labyrinthe :
     # constructeur
@@ -62,5 +63,17 @@ class Labyrinthe :
                 if self.matrice[i][j] == 'D':
                     return pygame.Vector2(j,i)
 
+                
+    def finish(self, item_list):
+        items_collected = 0
+        if not self.is_finished :
+            for item in item_list:
+                if item.isCollected :
+                    items_collected +=1
+            if items_collected == len(item_list):
+                print('Arrivé avec tous les items, level validé')
+                self.is_finished = True
+            else:
+                print('Il manque ' + str(len(item_list) - items_collected) + " diamants. Level en attente de validation, recherchez les objets manquants.")
 
 

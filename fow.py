@@ -19,9 +19,9 @@ class fog_of_war:
                 if self.matrice[i][j] == 1:
                     pygame.draw.rect(screen, color_dict["fow_color_not_seen"], pygame.Rect(j*tilesize, i*tilesize, tilesize, tilesize))
                 elif self.matrice[i][j] == 2:
-                    if labyrinthe.getXY(j,i) == 0:
+                    if labyrinthe.getXY(j,i) == '0':
                         pygame.draw.rect(screen, color_dict["fow_color_seen"], pygame.Rect(j*tilesize, i*tilesize, tilesize, tilesize))
-                    elif labyrinthe.getXY(j,i) == 1:
+                    elif labyrinthe.getXY(j,i) == '1':
                         pygame.draw.rect(screen, color_dict["fow_color_wall_fog"], pygame.Rect(j*tilesize, i*tilesize, tilesize, tilesize))
 
     def update(self, player_pos):

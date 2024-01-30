@@ -6,12 +6,13 @@ from inputController import inputControl
 from grid import Grid
 from color_reader import color_read
 import item
+import levelloader
 # pygame setup
 pygame.init()
 
 #constantes
-tilesize = 32 # taille d'une tuile IG
-size = (20, 10) # taille du monde
+
+
 fps = 30 # fps du jeu
 player_speed = 150 # vitesse du joueur
 next_move = 0 #tic avant déplacement
@@ -19,18 +20,23 @@ next_move = 0 #tic avant déplacement
 # color
 couleurs = color_read().readFile("color.ini")
 
-screen = pygame.display.set_mode((size[0]*tilesize, size[1]*tilesize))
+
 clock = pygame.time.Clock()
 running = True
 dt = 0
 show_grid = True
 show_pos = False
 
+#LEVEL
+level_file = "level-01.csv"
+level = levelloader.newLevel(level_file)
+tilesize = level.level_dict["TILESIZE"] # taille d'une tuile IG
+size = (level.level_dict["SIZE_X"], level.level_dict["SIZE_Y"]) # taille du monde
 
-
+screen = pygame.display.set_mode((size[0]*tilesize, size[1]*tilesize))
 # Labyrinthe
 laby = labyrinthe.Labyrinthe(size[0],size[1])
-laby.set_from_file("laby-01.csv")
+laby.set_from_file(level.level_dict["LABY_FILE"])
 brouillard = fow.fog_of_war(size[0],size[1])
 
 grid = Grid(size[0], size[1],tilesize)
@@ -41,7 +47,7 @@ input = inputControl()
 gridPressed = 0
 posPressed = 0
 
-item_1 = item.newItem(17,8)
+item_list = level.item_list
 
 #tour de boucle, pour chaque FPS
 while running:
@@ -123,9 +129,11 @@ while running:
 
     # affichage du labyrinthe
     laby.draw(screen,tilesize,couleurs)
+    for elt in item_list:
+        elt.draw(screen,tilesize,couleurs)
     brouillard.draw(screen,tilesize,player_pos,laby, couleurs)
     
-    item_1.draw(screen,tilesize,couleurs)
+    
 
     #affichage du joueur
     pygame.draw.rect(screen, couleurs["player_color"], pygame.Rect(player_pos.x*tilesize, player_pos.y*tilesize, tilesize, tilesize))
