@@ -2,6 +2,7 @@
 import pygame
 import fow
 import labyrinthe
+from grid import Grid
 # pygame setup
 pygame.init()
 
@@ -33,6 +34,8 @@ player_pos = pygame.Vector2(size[0]//8, size[1]//2)
 laby = labyrinthe.Labyrinthe(size[0],size[1])
 laby.set_from_file("laby-01.csv")
 brouillard = fow.fog_of_war(size[0],size[1])
+
+grid = Grid(size[0], size[1],tilesize)
 
 
 #tour de boucle, pour chaque FPS
@@ -113,10 +116,7 @@ while running:
 
     # affichage des différents composants
     if show_grid:
-        for i in range(1,size[0]):
-            pygame.draw.line(screen,grid_color, (tilesize*i, 0), (tilesize*i, tilesize*size[0]) )
-        for i in range(0,size[1]):
-            pygame.draw.line(screen,grid_color, (0, tilesize*i), (tilesize*size[0], tilesize*i) )
+        grid.draw(screen, grid_color)
 
     # affichage du labyrinthe
     laby.draw(screen,tilesize)
