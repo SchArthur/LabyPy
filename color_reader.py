@@ -17,6 +17,3 @@ class color_read():
         color_file.close()
         return self.color_dict
 
-test = color_read()
-print(test.readFile("color.ini")["ground_color"])
-

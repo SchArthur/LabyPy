@@ -6,17 +6,10 @@ class Labyrinthe :
         """sizeX, sizeY désignent la taille du labyrinthe sur l'axe (x,y)"""
         self.sizeX = sizeX
         self.sizeY = sizeY
+
+        self.is_finished = False
         #attention création d'une matrice en Y X
         self.matrice = [ [0]* self.sizeX for _ in range(self.sizeY) ]
-
-    def affiche(self):
-        """Sortie console du labyrinthe"""
-        for j in range(self.sizeY):
-            for i in range(self.sizeX):
-                # rappel: matrice en Y,X
-                print(self.matrice[j][i], end = "")
-            print()
-        #print(self.matrice)
 
     def get_matrice(self):
         """renvoie la matrice associée au labyrinthe"""
@@ -44,7 +37,6 @@ class Labyrinthe :
         list_lignes = file.readlines()
         for i in range(len(list_lignes)):
             liste_cases = list_lignes[i][:-1]
-            print(liste_cases)
             liste_cases = liste_cases.split(',')
             for j in range(len(liste_cases)):
                 self.setXY(j,i,liste_cases[j])
@@ -71,10 +63,4 @@ class Labyrinthe :
                     return pygame.Vector2(j,i)
 
 
-"""
-laby = Labyrinthe(20,10)
 
-laby.set_from_file("laby-01.csv")
-
-print(laby.matrice[2][4])
-"""
