@@ -28,7 +28,7 @@ show_grid = True
 show_pos = False
 
 #LEVEL
-level_file = "level-01.csv"
+level_file = "level-02.csv"
 level = levelloader.newLevel(level_file)
 tilesize = level.level_dict["TILESIZE"] # taille d'une tuile IG
 size = (level.level_dict["SIZE_X"], level.level_dict["SIZE_Y"]) # taille du monde
@@ -57,7 +57,7 @@ while running:
     # lecture clavier / souris
 
     keysPressed = input.keyPressed()
-   
+
     # Quit game
     if keysPressed["QUIT"] == 1:
         running = False
@@ -68,7 +68,7 @@ while running:
         gridPressed = True
     if keysPressed["GRID"] == 0 and gridPressed:
         gridPressed = False
-    
+
 
     if keysPressed["POS"] == 1 and not posPressed:
         show_pos = not show_pos
@@ -118,6 +118,9 @@ while running:
                 if (player_pos.x, player_pos.y) == (elt.position_x, elt.position_y):
                     if not elt.isCollected:
                         elt.collect()
+            for elt in alien_list:
+                if (player_pos.x, player_pos.y) == (elt.position_x, elt.position_y):
+                    player_pos = laby.getPlayerPos()
 
     if show_pos:
         print("pos: ",player_pos)
@@ -133,11 +136,11 @@ while running:
     for elt in item_list:
         elt.draw(screen,tilesize,couleurs)
     for elt in alien_list:
-        elt.roam(dt, laby)
+        elt.roam(dt, laby, size[0], size[1])
         elt.draw(screen,tilesize,couleurs)
-    # brouillard.draw(screen,tilesize,player_pos,laby, couleurs)
-    
-    
+    brouillard.draw(screen,tilesize,player_pos,laby, couleurs)
+
+
 
     #affichage du joueur
     pygame.draw.rect(screen, couleurs["player_color"], pygame.Rect(player_pos.x*tilesize, player_pos.y*tilesize, tilesize, tilesize))

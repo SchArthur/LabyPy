@@ -13,7 +13,7 @@ class newAlien:
         circle_center = (self.position_x*tileSize + tileSize/2, self.position_y*tileSize + tileSize/2)
         pygame.draw.circle(screen, item_color, circle_center, tileSize/2)
 
-    def roam(self,deltaTime, labyrinthe):
+    def roam(self,deltaTime, labyrinthe, max_x, max_y):
         self.next_move += deltaTime
         if self.next_move > 0:
             old_pos = (self.position_x,self.position_y)
@@ -30,6 +30,19 @@ class newAlien:
             elif direction == 'RIGHT':
                 self.position_x += 1
                 self.next_move = self.getRandomSpeed()
+
+            if self.position_y < 0:
+                self.position_y = 0
+                self.next_move = 1
+            if self.position_y >= max_y:
+                self.position_y = max_y-1
+                self.next_move = 1
+            if self.position_x < 0:
+                self.position_x = 0
+                self.next_move = 1
+            if self.position_x > max_x:
+                self.position_x = max_y-1
+                self.next_move = 1
                 
             if labyrinthe.getXY(self.position_x, self.position_y) == '1' :
                 self.next_move = 1
