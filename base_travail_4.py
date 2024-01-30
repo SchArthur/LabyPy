@@ -118,9 +118,9 @@ while running:
                 if (player_pos.x, player_pos.y) == (elt.position_x, elt.position_y):
                     if not elt.isCollected:
                         elt.collect()
-            for elt in alien_list:
-                if (player_pos.x, player_pos.y) == (elt.position_x, elt.position_y):
-                    player_pos = laby.getPlayerPos()
+        for elt in alien_list:
+            if (player_pos.x, player_pos.y) == (elt.position_x, elt.position_y):
+                player_pos = laby.getPlayerPos()
 
     if show_pos:
         print("pos: ",player_pos)
