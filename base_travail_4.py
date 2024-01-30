@@ -5,6 +5,7 @@ import labyrinthe
 from inputController import inputControl
 from grid import Grid
 from color_reader import color_read
+import item
 # pygame setup
 pygame.init()
 
@@ -39,6 +40,8 @@ player_pos = laby.getPlayerPos()
 input = inputControl()
 gridPressed = 0
 posPressed = 0
+
+item_1 = item.newItem(17,8)
 
 #tour de boucle, pour chaque FPS
 while running:
@@ -112,6 +115,8 @@ while running:
     # affichage du labyrinthe
     laby.draw(screen,tilesize,couleurs)
     brouillard.draw(screen,tilesize,player_pos,laby, couleurs)
+    
+    item_1.draw(screen,tilesize,couleurs)
 
     #affichage du joueur
     pygame.draw.rect(screen, couleurs["player_color"], pygame.Rect(player_pos.x*tilesize, player_pos.y*tilesize, tilesize, tilesize))
