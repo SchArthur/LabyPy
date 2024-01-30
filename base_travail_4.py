@@ -2,6 +2,7 @@
 import pygame
 import fow
 import labyrinthe
+from inputController import inputControl
 from grid import Grid
 # pygame setup
 pygame.init()
@@ -26,8 +27,6 @@ dt = 0
 show_grid = True
 show_pos = False
 
-keys= { "UP":0 , "DOWN":0, "LEFT":0, "RIGHT":0 }
-
 player_pos = pygame.Vector2(size[0]//8, size[1]//2)
 
 # Labyrinthe
@@ -37,63 +36,51 @@ brouillard = fow.fog_of_war(size[0],size[1])
 
 grid = Grid(size[0], size[1],tilesize)
 
+input = inputControl()
+gridPressed = 0
+posPressed = 0
 
 #tour de boucle, pour chaque FPS
 while running:
     screen.fill(ground_color)
 
     # lecture clavier / souris
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
 
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_z or event.key == pygame.K_UP:
-                keys['UP'] = 1
-            if event.key == pygame.K_s or event.key == pygame.K_DOWN:
-                keys['DOWN'] = 1
-            if event.key == pygame.K_q or event.key == pygame.K_LEFT:
-                keys['LEFT'] = 1
-            if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
-                keys['RIGHT'] = 1
+    keysPressed = input.keyPressed()
+   
+    # Quit game
+    if keysPressed["QUIT"] == 1:
+        running = False
 
-        if event.type == pygame.KEYUP:
-            if event.key == pygame.K_z or event.key == pygame.K_UP:
-                keys['UP'] = 0
-            if event.key == pygame.K_s or event.key == pygame.K_DOWN:
-                keys['DOWN'] = 0
-            if event.key == pygame.K_q or event.key == pygame.K_LEFT:
-                keys['LEFT'] = 0
-            if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
-                keys['RIGHT'] = 0
-
-            if event.key == pygame.K_ESCAPE:
-                running = False
-            if event.key == pygame.K_g:
-                show_grid = not show_grid
-            if event.key == pygame.K_p:
-                show_pos = not show_pos
-        
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            pos = pygame.mouse.get_pos()
-            print("mouse_pos:", pos)
+    # Show grid
+    if keysPressed["GRID"] == 1 and not gridPressed:
+        show_grid = not show_grid
+        gridPressed = True
+    if keysPressed["GRID"] == 0 and gridPressed:
+        gridPressed = False
     
+
+    if keysPressed["POS"] == 1 and not posPressed:
+        show_pos = not show_pos
+        posPressed = True
+    if keysPressed["POS"] == 0 and posPressed:
+        posPressed = False
 
 
     next_move += dt
     # gestion des déplacements
     if next_move>0:
         old_pos = player_pos.copy()
-        if keys['UP'] == 1:
+        if keysPressed['UP'] == 1:
             player_pos.y -= 1
             next_move = -player_speed
-        elif keys['DOWN'] == 1:
+        elif keysPressed['DOWN'] == 1:
             player_pos.y += 1
             next_move = -player_speed
-        elif keys['LEFT'] == 1:
+        elif keysPressed['LEFT'] == 1:
             player_pos.x -= 1
             next_move = -player_speed
-        elif keys['RIGHT'] == 1:
+        elif keysPressed['RIGHT'] == 1:
             player_pos.x += 1
             next_move = -player_speed
 
@@ -115,6 +102,7 @@ while running:
 
 
     # affichage des différents composants
+    # affichage de la grid
     if show_grid:
         grid.draw(screen, grid_color)
 
