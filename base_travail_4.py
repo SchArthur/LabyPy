@@ -5,7 +5,7 @@ import labyrinthe
 from inputController import inputControl
 from grid import Grid
 from color_reader import color_read
-import levelloader
+import loaders
 # pygame setup
 pygame.init()
 
@@ -26,16 +26,16 @@ dt = 0
 show_grid = True
 show_pos = False
 
-#LEVEL
-level_file = "level-02.csv"
-level = levelloader.newLevel(level_file)
+# LOADING
+level_file = "level_1.ini"
+level = loaders.loadLevel(level_file)
 tilesize = level.level_dict["TILESIZE"] # taille d'une tuile IG
 size = (level.level_dict["SIZE_X"], level.level_dict["SIZE_Y"]) # taille du monde
 
 screen = pygame.display.set_mode((size[0]*tilesize, size[1]*tilesize))
 # Labyrinthe
 laby = labyrinthe.Labyrinthe(size[0],size[1])
-laby.set_from_file(level.level_dict["LABY_FILE"])
+laby.set_from_list(level.level_dict["LABY_FILE"])
 brouillard = fow.fog_of_war(size[0],size[1])
 
 grid = Grid(size[0], size[1],tilesize)
