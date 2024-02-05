@@ -65,6 +65,7 @@ class loadLevel(Loader):
 
         self.general = {}
         self.monsters = []
+        self.diamonds = []
         self.map = []
 
         file_lines = file.readlines()
@@ -82,6 +83,11 @@ class loadLevel(Loader):
                 for line in lines_list:
                     values = line.split(',')
                     self.monsters.append((int(values[0]), int(values[1])))
+            elif '[diamonds]' in file_lines[i]:
+                lines_list = self.section_list(file_lines, i)
+                for line in lines_list:
+                    values = line.split(',')
+                    self.diamonds.append((int(values[0]), int(values[1])))
             elif '[map]' in file_lines[i]:
                 lines_list = self.section_list(file_lines, i)
                 for x in range(len(lines_list)):
@@ -95,3 +101,9 @@ class loadLevel(Loader):
         for elt in self.monsters:
             monsters.append(newAlien(elt[0], elt[1]))
         return monsters
+    
+    def create_diamonds(self):
+        diamonds = []
+        for elt in self.diamonds:
+            diamonds.append(newItem(elt[0],elt[1]))
+        return diamonds
