@@ -32,6 +32,13 @@ class Labyrinthe :
         """Détruit un mur du labyrinthe en (i,j) sur l'axe (x,y)"""
         self.matrice[j][i]=0
 
+    def set_from_list(self, cell_list):
+        for x in range(len(cell_list)):
+            cell_line = cell_list[x]
+            for y in range(len(cell_line)):
+                self.setXY(x,y,cell_line[x][y])
+
+
     def set_from_file(self, fichier:str):
         """Lis et créer la matrice présente dans le fichier à l'adresse indiqué"""
         file = open(fichier, "r")
@@ -41,7 +48,6 @@ class Labyrinthe :
             liste_cases = liste_cases.split(',')
             for j in range(len(liste_cases)):
                 self.setXY(j,i,liste_cases[j])
-
         file.close()
 
     def draw(self, screen, tilesize, color_dict):
