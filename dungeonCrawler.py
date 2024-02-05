@@ -43,7 +43,7 @@ input = inputControl()
 gridPressed = 0
 posPressed = 0
 
-item_list = [item.newItem(10,10)]
+item_list = level.create_diamonds()
 alien_list = level.create_aliens()
 
 #tour de boucle, pour chaque FPS
@@ -114,12 +114,20 @@ while running:
                 if (player_pos.x, player_pos.y) == (elt.position_x, elt.position_y):
                     if not elt.isCollected:
                         elt.collect()
-        for elt in alien_list:
-            if (player_pos.x, player_pos.y) == (elt.position_x, elt.position_y):
-                player_pos = laby.getPlayerPos()
+                        
+            if show_pos:
+                print("pos: ",player_pos)
+                mouse_coords = [0,0]
+                mouse_pos = keysPressed['MOUSE_COORDS']
+                mouse_coords[0] = mouse_pos[0]//tilesize
+                mouse_coords[1] = mouse_pos[1]//tilesize
+                print(mouse_coords)
 
-    if show_pos:
-        print("pos: ",player_pos)
+    for elt in alien_list:
+        if (player_pos.x, player_pos.y) == (elt.position_x, elt.position_y):
+            player_pos = laby.getPlayerPos()
+
+    
 
 
     # affichage des différents composants
@@ -134,12 +142,11 @@ while running:
     for elt in alien_list:
         elt.roam(dt, laby, size[0], size[1])
         elt.draw(screen,tilesize,couleurs)
-    # brouillard.draw(screen,tilesize,player_pos,laby, couleurs)
+    brouillard.draw(screen,tilesize,player_pos,laby, couleurs)
 
     #affichage du joueur
     pygame.draw.rect(screen, couleurs["player_color"], pygame.Rect(player_pos.x*tilesize, player_pos.y*tilesize, tilesize, tilesize))
 
     pygame.display.flip()
     dt = clock.tick(fps)
-print(laby.matrice)
 pygame.quit()

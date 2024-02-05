@@ -39,18 +39,6 @@ class Labyrinthe :
             for y in range(len(cell_line)):
                 self.setXY(x,y,cell_list[x][y])
 
-
-    def set_from_file(self, fichier:str):
-        """Lis et créer la matrice présente dans le fichier à l'adresse indiqué"""
-        file = open(fichier, "r")
-        list_lignes = file.readlines()
-        for i in range(len(list_lignes)):
-            liste_cases = list_lignes[i][:-1]
-            liste_cases = liste_cases.split(',')
-            for j in range(len(liste_cases)):
-                self.setXY(j,i,liste_cases[j])
-        file.close()
-
     def draw(self, screen, tilesize, color_dict):
         wall_color = color_dict['wall_color']
         finish_color = color_dict['finish_color']
