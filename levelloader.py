@@ -2,46 +2,62 @@ from item import newItem
 from alien import newAlien
 
 class newLevel:
-    def __init__(self,file):
+    def __init__(self,file : str):
         level_file = open(file,"r")
-        self.item_list = []
-        self.alien_list=[]
-
-        # file format
-        premiere_ligne = level_file.readline().split(",")
-        file_format = premiere_ligne[0]
-        if file_format != 'ini':
-            raise ValueError("Wrong file format")
-        else :
-            self.level_dict = {}
-            self.level_dict["VERSION"] = premiere_ligne[1]
-            self.level_dict["AUTEUR"] = premiere_ligne[2][:-1]
-
-        #size et tilesize
-        next_ligne = level_file.readline().split(",")
-        self.level_dict["TILESIZE"] = int(next_ligne[0])
-        self.level_dict["SIZE_X"] = int(next_ligne[1])
-        self.level_dict["SIZE_Y"] = int(next_ligne[2][:-1])
         
-        # laby file
-        next_ligne = level_file.readline().split(",")
-        self.level_dict["LABY_FILE"] = next_ligne[0]
-        
-        #items
-        next_ligne = level_file.readline().split(",")
-        self.level_dict["ITEM_TOTAL"] = int(next_ligne[0])
-        for i in range(0, int(self.level_dict["ITEM_TOTAL"])):
-            next_ligne = level_file.readline().split(",")
-            self.level_dict["ITEM_" + str(i + 1) + "_X"] = int(next_ligne[0])
-            self.level_dict["ITEM_" + str(i + 1) + "_Y"] = int(next_ligne[1])
-            self.item_list.append(newItem(int(next_ligne[0]),int(next_ligne[1])))
-
-        next_ligne = level_file.readline().split(",")
-        self.level_dict["ALIEN_TOTAL"] = int(next_ligne[0])
-        for i in range(0, int(self.level_dict["ALIEN_TOTAL"])):
-            next_ligne = level_file.readline().split(",")
-            self.level_dict["ALIEN_" + str(i + 1) + "_X"] = int(next_ligne[0])
-            self.level_dict["ALIEN_" + str(i + 1) + "_Y"] = int(next_ligne[1])
-            self.alien_list.append(newAlien(int(next_ligne[0]),int(next_ligne[1])))
+        self.load(level_file)
 
         level_file.close()
+
+    def load(self, file):
+        """
+        Creer un dict des infos generales, 
+        une liste des tuples des coords des monstres
+        une liste des linges de cases de la carte
+        """
+
+        self.general = {}
+        self.monsters = []
+        self.map = []
+
+        file_lines = file.readlines()
+
+        for i in range(len(file_lines)):
+            if '[general]' in file_lines[i]:
+                lines_list = self.section_list(file_lines, i)
+                for line in lines_list:
+                    values = line.split('=')
+                    if values[1].isnumeric():
+                        values[1] = int(values[1])
+                    self.general[values[0]] = values[1]
+            elif '[monsters]' in file_lines[i]:
+                lines_list = self.section_list(file_lines, i)
+                for line in lines_list:
+                    values = line.split(',')
+                    self.monsters.append((int(values[0]), int(values[1])))
+            elif '[map]' in file_lines[i]:
+                lines_list = self.section_list(file_lines, i)
+                for x in range(len(lines_list)):
+                    self.map.append([])
+                    values = lines_list[x].split(',')
+                    for y in range(len(values)):
+                        state = values[y]
+                        if state.isnumeric():
+                            self.map[x].append(int(values[y]))
+                        else:
+                            self.map[x].append(values[y])
+
+    def section_list(self, lines_list, line_index):
+        # Return la liste des lignes de la section
+        List = []
+        for i in range(line_index + 1, len(lines_list)):
+            if '[' not in lines_list[i]:
+                List.append(lines_list[i][:-1])
+            else :
+                break
+        return List
+
+level_file = newLevel('level_1.ini')
+print(level_file.general)
+print(level_file.monsters)
+print(level_file.map)
