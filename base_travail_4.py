@@ -5,7 +5,6 @@ import labyrinthe
 from inputController import inputControl
 from grid import Grid
 from color_reader import color_read
-import item
 import levelloader
 # pygame setup
 pygame.init()
