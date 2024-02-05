@@ -4,7 +4,6 @@ import fow
 import labyrinthe
 from inputController import inputControl
 from grid import Grid
-from color_reader import color_read
 import loaders
 import item
 # pygame setup
@@ -136,8 +135,6 @@ while running:
         elt.roam(dt, laby, size[0], size[1])
         elt.draw(screen,tilesize,couleurs)
     # brouillard.draw(screen,tilesize,player_pos,laby, couleurs)
-
-
 
     #affichage du joueur
     pygame.draw.rect(screen, couleurs["player_color"], pygame.Rect(player_pos.x*tilesize, player_pos.y*tilesize, tilesize, tilesize))
