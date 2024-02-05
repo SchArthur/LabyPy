@@ -3,14 +3,15 @@ import item
 
 class Labyrinthe :
     # constructeur
-    def __init__(self, sizeX, sizeY):
+    def __init__(self, sizeX, sizeY, from_list = False):
         """sizeX, sizeY désignent la taille du labyrinthe sur l'axe (x,y)"""
         self.sizeX = sizeX
         self.sizeY = sizeY
-
         self.is_finished = False
         #attention création d'une matrice en Y X
-        self.matrice = [ [0]* self.sizeX for _ in range(self.sizeY) ]
+        self.matrice = [ [0]* self.sizeX for _ in range(self.sizeY)]
+        if from_list != False:
+            self.set_from_list(from_list)
 
     def get_matrice(self):
         """renvoie la matrice associée au labyrinthe"""
@@ -20,7 +21,7 @@ class Labyrinthe :
         """Renvoie la case (i,j) du labyrinthe sur l'axe (x,y)"""
         return self.matrice[j][i]
 
-    def setXY(self, i,j,v):
+    def setXY(self, j,i,v):
         """Modifie par v la case (i,j) sur l'axe (x,y)"""
         self.matrice[j][i] = v
     
@@ -36,7 +37,7 @@ class Labyrinthe :
         for x in range(len(cell_list)):
             cell_line = cell_list[x]
             for y in range(len(cell_line)):
-                self.setXY(x,y,cell_line[x][y])
+                self.setXY(x,y,cell_list[x][y])
 
 
     def set_from_file(self, fichier:str):

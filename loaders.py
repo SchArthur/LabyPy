@@ -1,3 +1,6 @@
+from alien import newAlien
+from item import newItem
+
 class Loader:
     def __init__(self, file : str):
         File = open(file,"r")
@@ -51,9 +54,7 @@ class loadConfig(Loader):
                         values[1] = int(values[1])
                     self.player[values[0]] = values[1]
         
-    
 class loadLevel(Loader):
-
 
     def load(self, file):
         """
@@ -87,19 +88,10 @@ class loadLevel(Loader):
                     self.map.append([])
                     values = lines_list[x].split(',')
                     for y in range(len(values)):
-                        state = values[y]
-                        if state.isnumeric():
-                            self.map[x].append(int(values[y]))
-                        else:
-                            self.map[x].append(values[y])
+                        self.map[x].append(values[y])
 
-
-level_file = loadLevel('level_1.ini')
-print(level_file.general)
-print(level_file.monsters)
-print(level_file.map)
-
-config = loadConfig('config.ini')
-print(config.general)
-print(config.color)
-print(config.player)
+    def create_aliens(self):
+        monsters = []
+        for elt in self.monsters:
+            monsters.append(newAlien(elt[0], elt[1]))
+        return monsters

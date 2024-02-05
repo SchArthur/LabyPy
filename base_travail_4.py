@@ -6,19 +6,23 @@ from inputController import inputControl
 from grid import Grid
 from color_reader import color_read
 import loaders
+import item
 # pygame setup
 pygame.init()
 
-#constantes
+# LOADING
+level = loaders.loadLevel("level_1.ini")
+settings = loaders.loadConfig('config.ini')
 
+# SETTING
+player_speed = settings.player['player_speed']
+couleurs = settings.color
+tilesize = settings.general["tilesize"] # taille d'une tuile IG
+size = (level.general["size_x"], level.general["size_y"]) # taille du monde
+laby = labyrinthe.Labyrinthe(size[0],size[1], from_list=level.map)
 
 fps = 30 # fps du jeu
-player_speed = 150 # vitesse du joueur
 next_move = 0 #tic avant déplacement
-
-# color
-couleurs = color_read().readFile("color.ini")
-
 
 clock = pygame.time.Clock()
 running = True
@@ -26,16 +30,10 @@ dt = 0
 show_grid = True
 show_pos = False
 
-# LOADING
-level_file = "level_1.ini"
-level = loaders.loadLevel(level_file)
-tilesize = level.level_dict["TILESIZE"] # taille d'une tuile IG
-size = (level.level_dict["SIZE_X"], level.level_dict["SIZE_Y"]) # taille du monde
-
 screen = pygame.display.set_mode((size[0]*tilesize, size[1]*tilesize))
 # Labyrinthe
-laby = labyrinthe.Labyrinthe(size[0],size[1])
-laby.set_from_list(level.level_dict["LABY_FILE"])
+
+
 brouillard = fow.fog_of_war(size[0],size[1])
 
 grid = Grid(size[0], size[1],tilesize)
@@ -46,8 +44,8 @@ input = inputControl()
 gridPressed = 0
 posPressed = 0
 
-item_list = level.item_list
-alien_list = level.alien_list
+item_list = [item.newItem(10,10)]
+alien_list = level.create_aliens()
 
 #tour de boucle, pour chaque FPS
 while running:
@@ -137,7 +135,7 @@ while running:
     for elt in alien_list:
         elt.roam(dt, laby, size[0], size[1])
         elt.draw(screen,tilesize,couleurs)
-    brouillard.draw(screen,tilesize,player_pos,laby, couleurs)
+    # brouillard.draw(screen,tilesize,player_pos,laby, couleurs)
 
 
 
@@ -146,5 +144,5 @@ while running:
 
     pygame.display.flip()
     dt = clock.tick(fps)
-
+print(laby.matrice)
 pygame.quit()
