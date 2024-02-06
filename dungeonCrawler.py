@@ -45,7 +45,7 @@ class newGame:
         self.posPressed = 0
 
         # elements
-        self.player = entities.Entity(player_pos, self.couleurs["player_color"], speed=self.player_speed)
+        self.player = entities.newPlayer(player_pos, self.couleurs["player_color"], speed=self.player_speed)
         player_controller = controller.PlayerController(self.player, self)
         self.player.addController(player_controller)
         self.entities_list = []
@@ -64,7 +64,7 @@ class newGame:
         while self.running:
             self.screen.fill(self.couleurs["ground_color"])
 
-            self.player.controller.Update()
+            self.player.Update(self.dt)
 
             # affichage des différents composants
             # affichage de la grid
@@ -76,7 +76,7 @@ class newGame:
             for elt in self.item_list:
                 elt.draw(self.screen,self.tilesize,self.couleurs)
             for elt in self.alien_list:
-                elt.update()
+                elt.Update(self.dt)
                 elt.draw(self.screen,self.tilesize)
             # self.brouillard.draw(self.screen,self.tilesize,self.player.pos,self.laby, self.couleurs)
             for elt in self.entities_list:

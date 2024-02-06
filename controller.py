@@ -1,6 +1,7 @@
 import pygame
 import entities
 import random
+import combat
 
 class MovementController :
     nextMove = 0
@@ -34,14 +35,10 @@ class MovementController :
                 self.next_move = -self.entity.speed
 
         collision_list = self.checkCollisions(self.entity.pos)
-        if 'ENTITIES' in collision_list:
-            if collision_list['ENTITIES'] != []:
-                for elt in collision_list['ENTITIES']:
-                    print(self, 'collided with :', elt)
-        if 'PLAYER' in collision_list:
-            if collision_list['PLAYER'] != []:
-                for elt in collision_list['PLAYER']:
-                    print(self, 'collided with :', elt)
+        if ('ENTITIES' in collision_list) and (collision_list['ENTITIES'] != []) and (self.entity.type == 'PLAYER'):
+            for elt in collision_list['ENTITIES']:
+                print(self, 'collided with :', elt)
+                combat.combat(self.entity, elt)
 
         if self.next_move == -self.entity.speed:
             if self.game.laby.getXY(int(self.entity.pos.x),int(self.entity.pos.y)) == 'A' :
