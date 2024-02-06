@@ -6,7 +6,6 @@ import controller
 from grid import Grid
 import loaders
 import entities
-import item
 # pygame setup
 pygame.init()
 
@@ -66,15 +65,6 @@ class newGame:
             self.screen.fill(self.couleurs["ground_color"])
 
             self.player.controller.Update()
-            #player movement
-                                
-            # if self.show_pos:
-            #     print("pos: ",self.player.pos)
-            #     mouse_coords = [0,0]
-            #     mouse_pos = keysPressed['MOUSE_COORDS']
-            #     mouse_coords[0] = mouse_pos[0]//self.tilesize
-            #     mouse_coords[1] = mouse_pos[1]//self.tilesize
-            #     print(mouse_coords)
 
             # affichage des différents composants
             # affichage de la grid

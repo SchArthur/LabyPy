@@ -59,7 +59,7 @@ class Labyrinthe :
                     return pygame.Vector2(j,i)
 
                 
-    def finish(self, item_list):
+    def finish(self, item_list, game):
         items_collected = 0
         if not self.is_finished :
             for item in item_list:
@@ -68,6 +68,7 @@ class Labyrinthe :
             if items_collected == len(item_list):
                 print('Arrivé avec tous les items, level validé')
                 self.is_finished = True
+                game.running = False
             else:
                 print('Il manque ' + str(len(item_list) - items_collected) + " diamant(s). Level en attente de validation, recherchez les objets manquants.")
 
