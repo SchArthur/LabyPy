@@ -36,15 +36,15 @@ class MovementController :
                 if self.game.laby.getXY(int(self.entity.pos.x),int(self.entity.pos.y)) == 'A' :
                     self.game.laby.finish(self.game.item_list)
 
-                collision_list = self.checkCollisions(self.entity.pos)
-                if 'ENTITIES' in collision_list:
-                    if collision_list['ENTITIES'] != []:
-                        for elt in collision_list['ENTITIES']:
-                            print(self, 'collided with :', elt)
-                if 'PLAYER' in collision_list:
-                    if collision_list['PLAYER'] != []:
-                        for elt in collision_list['PLAYER']:
-                            print(self, 'collided with :', elt)
+        collision_list = self.checkCollisions(self.entity.pos)
+        if 'ENTITIES' in collision_list:
+            if collision_list['ENTITIES'] != []:
+                for elt in collision_list['ENTITIES']:
+                    print(self, 'collided with :', elt)
+        if 'PLAYER' in collision_list:
+            if collision_list['PLAYER'] != []:
+                for elt in collision_list['PLAYER']:
+                    print(self, 'collided with :', elt)
 
     def canMoveAround(self):
         up_tile = (int(self.entity.pos.x),int(self.entity.pos.y-1))
