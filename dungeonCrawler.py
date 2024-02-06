@@ -2,151 +2,98 @@
 import pygame
 import fow
 import labyrinthe
-from inputController import inputControl
+import controller
 from grid import Grid
 import loaders
+import entities
 import item
 # pygame setup
 pygame.init()
 
-# LOADING
-level = loaders.loadLevel("level_1.ini")
-settings = loaders.loadConfig('config.ini')
+class newGame:
+    def __init__(self) -> None:
+        # LOADING
+        self.level = loaders.loadLevel("level_1.ini")
+        self.settings = loaders.loadConfig('config.ini')
 
-# SETTING
-player_speed = settings.player['player_speed']
-couleurs = settings.color
-tilesize = settings.general["tilesize"] # taille d'une tuile IG
-size = (level.general["size_x"], level.general["size_y"]) # taille du monde
-laby = labyrinthe.Labyrinthe(size[0],size[1], from_list=level.map)
+        # SETTING
+        self.player_speed = self.settings.player['player_speed']
+        self.couleurs = self.settings.color
+        self.tilesize = self.settings.general["tilesize"] # taille d'une tuile IG
+        self.size = (self.level.general["size_x"], self.level.general["size_y"]) # taille du monde
+        self.laby = labyrinthe.Labyrinthe(self.size[0],self.size[1], from_list=self.level.map)
 
-fps = 30 # fps du jeu
-next_move = 0 #tic avant déplacement
+        self.fps = 30 # fps du jeu
+        self.next_move = 0 #tic avant déplacement
 
-clock = pygame.time.Clock()
-running = True
-dt = 0
-show_grid = True
-show_pos = False
+        self.clock = pygame.time.Clock()
 
-screen = pygame.display.set_mode((size[0]*tilesize, size[1]*tilesize))
-# Labyrinthe
+        self.dt = 0
+        self.show_grid = True
+        self.show_pos = False
 
-
-brouillard = fow.fog_of_war(size[0],size[1])
-
-grid = Grid(size[0], size[1],tilesize)
-
-player_pos = laby.getPlayerPos()
-
-input = inputControl()
-gridPressed = 0
-posPressed = 0
-
-item_list = level.create_diamonds()
-alien_list = level.create_aliens()
-
-#tour de boucle, pour chaque FPS
-while running:
-    screen.fill(couleurs["ground_color"])
-
-    # lecture clavier / souris
-
-    keysPressed = input.keyPressed()
-
-    # Quit game
-    if keysPressed["QUIT"] == 1:
-        running = False
-
-    # Show grid
-    if keysPressed["GRID"] == 1 and not gridPressed:
-        show_grid = not show_grid
-        gridPressed = True
-    if keysPressed["GRID"] == 0 and gridPressed:
-        gridPressed = False
+        self.screen = pygame.display.set_mode((self.size[0]*self.tilesize, self.size[1]*self.tilesize))
+        # Labyrinthe
 
 
-    if keysPressed["POS"] == 1 and not posPressed:
-        show_pos = not show_pos
-        posPressed = True
-    if keysPressed["POS"] == 0 and posPressed:
-        posPressed = False
+        self.brouillard = fow.fog_of_war(self.size[0],self.size[1])
 
+        self.grid = Grid(self.size[0], self.size[1],self.tilesize)
 
-    next_move += dt
-    # gestion des déplacements
-    if next_move>0:
-        old_pos = player_pos.copy()
-        if keysPressed['UP'] == 1:
-            player_pos.y -= 1
-            next_move = -player_speed
-        elif keysPressed['DOWN'] == 1:
-            player_pos.y += 1
-            next_move = -player_speed
-        elif keysPressed['LEFT'] == 1:
-            player_pos.x -= 1
-            next_move = -player_speed
-        elif keysPressed['RIGHT'] == 1:
-            player_pos.x += 1
-            next_move = -player_speed
+        player_pos = self.laby.getPlayerPos()
 
-        # vérification du déplacement du joueur pour ne pas sortir de la fenetre
-        if next_move == -player_speed:
-            if player_pos.y < 0:
-                player_pos.y = 0
-                next_move = 0
-            if player_pos.y >= size[1]:
-                player_pos.y = size[1]-1
-                next_move = 0
-            if player_pos.x < 0:
-                player_pos.x = 0
-                next_move = 0
-            if player_pos.x > size[0]-1:
-                player_pos.x = size[0]-1
-                next_move = 0
+        self.gridPressed = 0
+        self.posPressed = 0
 
-            #detection de collisions
-            if laby.getXY(int(player_pos.x),int(player_pos.y)) == '1' :
-                player_pos = old_pos.copy()
-            if laby.getXY(int(player_pos.x),int(player_pos.y)) == 'A' :
-                laby.finish(item_list)
-            for elt in item_list:
-                if (player_pos.x, player_pos.y) == (elt.position_x, elt.position_y):
-                    if not elt.isCollected:
-                        elt.collect()
-                        
-            if show_pos:
-                print("pos: ",player_pos)
-                mouse_coords = [0,0]
-                mouse_pos = keysPressed['MOUSE_COORDS']
-                mouse_coords[0] = mouse_pos[0]//tilesize
-                mouse_coords[1] = mouse_pos[1]//tilesize
-                print(mouse_coords)
+        # elements
+        self.player = entities.Entity(player_pos, self.couleurs["player_color"], speed=self.player_speed)
+        player_controller = controller.PlayerController(self.player, self)
+        self.player.addController(player_controller)
+        self.entities_list = []
+        self.entities_list.append(self.player)
+        self.item_list = self.level.create_diamonds()
+        self.alien_list = self.level.create_aliens(self.couleurs["alien_color"])
+        for elt in self.alien_list:
+            alien_controller = controller.monsterController(elt,self)
+            elt.addController(alien_controller)
 
-    for elt in alien_list:
-        if (player_pos.x, player_pos.y) == (elt.position_x, elt.position_y):
-            player_pos = laby.getPlayerPos()
+        self.run()
 
-    
+    def run(self):
+        self.running = True
+        #tour de boucle, pour chaque FPS
+        while self.running:
+            self.screen.fill(self.couleurs["ground_color"])
 
+            self.player.controller.Update()
+            #player movement
+                                
+            # if self.show_pos:
+            #     print("pos: ",self.player.pos)
+            #     mouse_coords = [0,0]
+            #     mouse_pos = keysPressed['MOUSE_COORDS']
+            #     mouse_coords[0] = mouse_pos[0]//self.tilesize
+            #     mouse_coords[1] = mouse_pos[1]//self.tilesize
+            #     print(mouse_coords)
 
-    # affichage des différents composants
-    # affichage de la grid
-    if show_grid:
-        grid.draw(screen, couleurs["grid_color"])
+            # affichage des différents composants
+            # affichage de la grid
+            if self.show_grid:
+                self.grid.draw(self.screen, self.couleurs["grid_color"])
 
-    # affichage du labyrinthe
-    laby.draw(screen,tilesize,couleurs)
-    for elt in item_list:
-        elt.draw(screen,tilesize,couleurs)
-    for elt in alien_list:
-        elt.roam(dt, laby, size[0], size[1])
-        elt.draw(screen,tilesize,couleurs)
-    brouillard.draw(screen,tilesize,player_pos,laby, couleurs)
+            # affichage du labyrinthe
+            self.laby.draw(self.screen,self.tilesize,self.couleurs)
+            for elt in self.item_list:
+                elt.draw(self.screen,self.tilesize,self.couleurs)
+            for elt in self.alien_list:
+                elt.update()
+                elt.draw(self.screen,self.tilesize)
+            # self.brouillard.draw(self.screen,self.tilesize,self.player.pos,self.laby, self.couleurs)
+            for elt in self.entities_list:
+                elt.draw(self.screen, self.tilesize)
+            
+            pygame.display.flip()
+            self.dt = self.clock.tick(self.fps)
+        pygame.quit()
 
-    #affichage du joueur
-    pygame.draw.rect(screen, couleurs["player_color"], pygame.Rect(player_pos.x*tilesize, player_pos.y*tilesize, tilesize, tilesize))
-
-    pygame.display.flip()
-    dt = clock.tick(fps)
-pygame.quit()
+game = newGame()

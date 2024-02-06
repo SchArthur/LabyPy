@@ -1,5 +1,7 @@
-from alien import newAlien
 from item import newItem
+from entities import newAlien
+from controller import monsterController
+import pygame
 
 class Loader:
     def __init__(self, file : str):
@@ -96,10 +98,12 @@ class loadLevel(Loader):
                     for y in range(len(values)):
                         self.map[x].append(values[y])
 
-    def create_aliens(self):
+    def create_aliens(self, color):
         monsters = []
         for elt in self.monsters:
-            monsters.append(newAlien(elt[0], elt[1]))
+            pos = pygame.Vector2(elt[0], elt[1])
+            monsters.append(newAlien(pos, color))
+            
         return monsters
     
     def create_diamonds(self):
